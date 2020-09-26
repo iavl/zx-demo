@@ -55,7 +55,7 @@ contract Paillier {
      * @dev set N*N, only owner can operate
      */
     function setN2(uint256 _n2) public {
-        require(owner == msg.sender, "only owner");
+//        require(owner == msg.sender, "only owner");
         N2 = _n2;
     }
 
