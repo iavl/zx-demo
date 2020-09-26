@@ -26,8 +26,8 @@ import (
 )
 
 const (
-	abiFilePath = "/Users/zhuliting/go/paillier-1/contract/paillier.abi"
-	yamlPath    = "/Users/zhuliting/go/paillier-1/config/sdk.yaml"
+	abiFilePath = "/Users/zhuliting/go/zx-demo/contract/paillier.abi"
+	yamlPath    = "/Users/zhuliting/go/zx-demo/config/sdk.yaml"
 
 	contractBech32Addr = "nch1hmljmh2n4esr6de8fd9jjnsth3ty0ux7d7082m"
 )
