@@ -66,7 +66,7 @@ func EncryptCompute(w http.ResponseWriter, req *http.Request) {
 func main() {
 	http.HandleFunc("/api/compute", EncryptCompute)
 	http.HandleFunc("/api/get_rsa", GetRSAKeyPair)
-	err := http.ListenAndServe(":8080", nil)
+	err := http.ListenAndServe(":9999", nil)
 	if err != nil {
 		log.Fatal("ListenAndServe: ", err)
 	}
