@@ -2,25 +2,28 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"io"
+	"io/ioutil"
 	"log"
-	"math/rand"
 	"net/http"
+
+	"github.com/iavl/zx-demo/utils"
 )
 
 type PrivKey struct {
-	Lamb int `json:"lambda"`
-	Miu  int `json:"miu"`
+	Lamb string `json:"lambda"`
+	Mu   string `json:"mu"`
 }
 
 type PubKey struct {
-	N int `json:"n"`
-	G int `json:"g"`
+	N string `json:"n"`
+	G string `json:"g"`
 }
 
 type RSAKeyPair struct {
-	PrivK PrivKey `json:"pri"`
-	PubK  PubKey  `json:"pub"`
+	PrivK PrivKey `json:"pri_key"`
+	PubK  PubKey  `json:"pub_key"`
 }
 
 type RetGetRSAKeyPair struct {
@@ -32,31 +35,62 @@ type RetEncryptCompute struct {
 	Log    string `json:"log"`
 }
 
-func GetRSAKeyPair(w http.ResponseWriter, req *http.Request) {
-	ret := new(RetGetRSAKeyPair)
-	//id := req.FormValue("id")
-	//id := req.PostFormValue('id')
-	//fmt.Println(id)
+type ReqBody struct {
+	DataList []int   `json:"data_list"`
+	PrivK    PrivKey `json:"pri_key"`
+	PubK     PubKey  `json:"pub_key"`
+}
 
-	pri := PrivKey{3312616468, 1437516892}
-	pub := PubKey{3312731593, 3312731594}
+func GetRSAKeyPair(w http.ResponseWriter, req *http.Request) {
+	// 1. generate pk and sk
+	pk, sk := utils.GetRSAKeyPair()
+	N, g := pk.ToDecimalString()
+	mu, lam := sk.ToDecimalString()
+	//N2 := pk.N2.Text(10)
+
+	pri := PrivKey{lam, mu}
+	pub := PubKey{N, g}
+
+	ret := new(RetGetRSAKeyPair)
 	ret.Data = RSAKeyPair{pri, pub}
 
 	retJson, _ := json.Marshal(ret)
-
 	io.WriteString(w, string(retJson))
 }
-func EncryptCompute(w http.ResponseWriter, req *http.Request) {
-	ret := new(RetEncryptCompute)
-	//id := req.FormValue("id")
-	//id := req.PostFormValue('id')
-	//fmt.Println(id)
 
-	randArr := make([]int, 30, 30)
-	for i, _ := range randArr {
-		randArr[i] = rand.Intn(1000000)
+func EncryptCompute(w http.ResponseWriter, req *http.Request) {
+	/*
+		post data:
+			{
+				"data_list": [112, 333, 444, 555],
+				"pri_key": {
+					"lambda": "2774103120",
+					"mu": "882170834"
+				},
+				"pub_key": {
+					"n": "2774208617",
+					"g": "2774208618"
+				}
+			}
+	*/
+
+	buf, err := ioutil.ReadAll(req.Body)
+	if err != nil {
+		io.WriteString(w, "request post data format error")
+		return
 	}
-	ret.Result = randArr
+
+	var body ReqBody
+	if err = json.Unmarshal(buf, &body); err != nil {
+		io.WriteString(w, "unmarshal post data error")
+	}
+
+	fmt.Println(fmt.Sprintf("data list: %v", body.DataList))
+	fmt.Println(fmt.Sprintf("pri key: %v", body.PrivK))
+	fmt.Println(fmt.Sprintf("pub key: %v", body.PubK))
+
+	ret := new(RetEncryptCompute)
+	ret.Result = body.DataList
 	ret.Log = "success"
 	retJson, _ := json.Marshal(ret)
 

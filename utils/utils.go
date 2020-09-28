@@ -121,3 +121,40 @@ func QueyrPaillierResult(taskId string) (result *big.Int) {
 
 	return result
 }
+
+func PaillerMain(pk *paillier.PublicKey, sk *paillier.PrivateKey, dataList []int64, idx int) {
+
+	fmt.Println(fmt.Sprintf("===================== 第 %d 组测试数据 =====================", idx))
+	// generate taskId
+	taskId := fmt.Sprintf("00000000000000000000000000000000000000000000000000000000000000%02d", idx)
+	fmt.Println(fmt.Sprintf("task id: %s", taskId))
+
+	ClearResult(taskId)
+
+	// 3. call contract to do paillier add
+	for i, item := range dataList {
+		//fmt.Println(fmt.Sprintf("%d", item))
+		cipherText, _ := pk.Encrypt(item)
+		fmt.Println(fmt.Sprintf("机构 %d, 明文贷款额：%d --> 加密密文：%d", i, item, cipherText))
+		PaillerAdd(taskId, cipherText)
+
+		//break
+	}
+
+	// 4. query result from contract
+	result := QueyrPaillierResult(taskId)
+	fmt.Println(fmt.Sprintf("===================== 第 %d 组测试结果 =====================", idx))
+	fmt.Println(fmt.Sprintf("合约计算出的结果: %v", result))
+
+	// 5. decrypt result
+	// Test the homomorphic property
+	sum, err := sk.Decrypt(result)
+	if err != nil {
+		fmt.Println(fmt.Errorf("decrypt failed: %v", err.Error()))
+		return
+	}
+
+	fmt.Println(fmt.Sprintf("使用RSA私钥解密后的结果: [%d]", sum))
+	fmt.Println(fmt.Sprintf("=========================================================="))
+
+}
