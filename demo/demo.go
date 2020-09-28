@@ -8,7 +8,6 @@ import (
 	"os"
 	"strconv"
 	"strings"
-	"time"
 
 	"github.com/iavl/zx-demo/paillier"
 
@@ -26,8 +25,8 @@ func PaillierDemo() {
 		// generate taskId
 		taskId := fmt.Sprintf("0000000000000000000000000000000000000000000000000000000000000%03d", idx)
 		utils.PaillerMain(pk, sk, items, taskId)
+
 		break
-		time.Sleep(2)
 	}
 }
 
@@ -81,8 +80,8 @@ func PaillierLocal() {
 	mu, lam := sk.ToDecimalString()
 	fmt.Println(fmt.Sprintf("RSA私钥：\nλ: %s\nμ: %s", lam, mu))
 
-	var inputs = [...]int64{6311, 6890, 663, 4242, 8376, 7961, 6634, 4969, 7808, 5866, 9558, 3578, 8268, 2281, 4617, 2289, 1553, 4104, 8725, 9861, 2407, 5081, 1618, 1208, 5409, 7735, 9171, 1649, 5796, 7113}
-	//var inputs = [...]int64{11, 89}
+	//var inputs = [...]int64{6311, 6890, 663, 4242, 8376, 7961, 6634, 4969, 7808, 5866, 9558, 3578, 8268, 2281, 4617, 2289, 1553, 4104, 8725, 9861, 2407, 5081, 1618, 1208, 5409, 7735, 9171, 1649, 5796, 7113}
+	var inputs = [...]int64{111, 222, 333}
 
 	fmt.Println(fmt.Sprintf("明文的贷款数额：\n%d", inputs))
 
@@ -108,4 +107,6 @@ func PaillierLocal() {
 
 func main() {
 	PaillierDemo()
+
+	//PaillierLocal()
 }

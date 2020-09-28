@@ -94,17 +94,24 @@ func EncryptCompute(w http.ResponseWriter, req *http.Request) {
 	fmt.Println(fmt.Sprintf("pri key: %v", body.PrivK))
 	fmt.Println(fmt.Sprintf("pub key: %v", body.PubK))
 
-	pk, err := paillier.NewPublicKey(body.PubK.N, body.PubK.G)
+	pk, err := paillier.NewPublicKey(utils.ToHexString(body.PubK.N), utils.ToHexString(body.PubK.G))
 	if err != nil {
 		io.WriteString(w, "parse pubkey error")
 		return
 	}
 
-	sk, err := paillier.NewPrivateKey(body.PrivK.Mu, body.PrivK.Lamb, pk)
+	sk, err := paillier.NewPrivateKey(utils.ToHexString(body.PrivK.Mu), utils.ToHexString(body.PrivK.Lamb), pk)
 	if err != nil {
 		io.WriteString(w, "parse priv key error")
 		return
 	}
+
+	N, g := pk.ToDecimalString()
+	fmt.Println(fmt.Sprintf("RSA公钥：n: %s g: %s", N, g))
+	fmt.Println(fmt.Sprintf("RSA N2: %s", pk.N2.Text(10)))
+
+	mu, lam := sk.ToDecimalString()
+	fmt.Println(fmt.Sprintf("RSA私钥：λ: %s μ: %s", lam, mu))
 
 	// generate taskId
 	rand.Seed(time.Now().Unix())
