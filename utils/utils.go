@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"math/big"
 	"os/exec"
-	"testing"
 
 	types "github.com/iavl/zx-demo"
 
@@ -25,7 +24,7 @@ func GetRSAKeyPair() (*paillier.PublicKey, *paillier.PrivateKey) {
 	return pk, sk
 }
 
-func SetN2(t *testing.T, n2 *big.Int) {
+func SetN2(n2 *big.Int) {
 	command := "../cli/setN2.sh"
 
 	fmt.Println(n2.String())
@@ -48,7 +47,7 @@ func SetN2(t *testing.T, n2 *big.Int) {
 	fmt.Println(fmt.Sprintf("SetN2 txhash: %v", res.Txhash))
 }
 
-func ClearResult(t *testing.T, taskId string) {
+func ClearResult(taskId string) {
 	command := "../cli/ClearResult.sh"
 
 	cmd := exec.Command("/bin/bash", command, "alice", types.ContractBech32Addr, taskId)
@@ -70,7 +69,7 @@ func ClearResult(t *testing.T, taskId string) {
 	fmt.Println(fmt.Sprintf("ClearResult txhash: %v", res.Txhash))
 }
 
-func PaillerAdd(t *testing.T, taskId string, value *big.Int) {
+func PaillerAdd(taskId string, value *big.Int) {
 
 	command := "../cli/PaillerAdd.sh"
 

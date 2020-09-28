@@ -17,7 +17,7 @@ func TestPaillierDemo(t *testing.T) {
 	// 1. generate pk and sk
 	pk, sk := utils.GetRSAKeyPair()
 
-	utils.SetN2(t, pk.N2)
+	utils.SetN2(pk.N2)
 
 	// 2. read data from file
 	lines := readDataFromFile("data.txt")
@@ -28,14 +28,14 @@ func TestPaillierDemo(t *testing.T) {
 		taskId := fmt.Sprintf("00000000000000000000000000000000000000000000000000000000000000%02d", idx)
 		fmt.Println(fmt.Sprintf("task id: %s", taskId))
 
-		utils.ClearResult(t, taskId)
+		utils.ClearResult(taskId)
 
 		// 3. call contract to do paillier add
 		for i, item := range items {
 			//fmt.Println(fmt.Sprintf("%d", item))
 			cipherText, _ := pk.Encrypt(item)
 			fmt.Println(fmt.Sprintf("机构 %d, 明文贷款额：%d --> 加密密文：%d", i, item, cipherText))
-			utils.PaillerAdd(t, taskId, cipherText)
+			utils.PaillerAdd(taskId, cipherText)
 
 			//break
 		}
