@@ -78,7 +78,7 @@ contract Paillier {
     * @dev clear result by taskId
     */
     function clear(bytes32 taskId) public {
-        require(owner == msg.sender, "only owner");
+//        require(owner == msg.sender, "only owner");
         results[taskId] = 1;
     }
 
