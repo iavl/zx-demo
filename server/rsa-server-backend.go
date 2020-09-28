@@ -6,7 +6,11 @@ import (
 	"io"
 	"io/ioutil"
 	"log"
+	"math/rand"
 	"net/http"
+	"time"
+
+	"github.com/iavl/zx-demo/paillier"
 
 	"github.com/iavl/zx-demo/utils"
 )
@@ -31,12 +35,12 @@ type RetGetRSAKeyPair struct {
 }
 
 type RetEncryptCompute struct {
-	Result []int  `json:"result"`
-	Log    string `json:"log"`
+	Result []int64 `json:"result"`
+	Log    string  `json:"log"`
 }
 
 type ReqBody struct {
-	DataList []int   `json:"data_list"`
+	DataList []int64 `json:"data_list"`
 	PrivK    PrivKey `json:"pri_key"`
 	PubK     PubKey  `json:"pub_key"`
 }
@@ -83,11 +87,29 @@ func EncryptCompute(w http.ResponseWriter, req *http.Request) {
 	var body ReqBody
 	if err = json.Unmarshal(buf, &body); err != nil {
 		io.WriteString(w, "unmarshal post data error")
+		return
 	}
 
 	fmt.Println(fmt.Sprintf("data list: %v", body.DataList))
 	fmt.Println(fmt.Sprintf("pri key: %v", body.PrivK))
 	fmt.Println(fmt.Sprintf("pub key: %v", body.PubK))
+
+	pk, err := paillier.NewPublicKey(body.PubK.N, body.PubK.G)
+	if err != nil {
+		io.WriteString(w, "parse pubkey error")
+		return
+	}
+
+	sk, err := paillier.NewPrivateKey(body.PrivK.Mu, body.PrivK.Lamb, pk)
+	if err != nil {
+		io.WriteString(w, "parse priv key error")
+		return
+	}
+
+	// generate taskId
+	rand.Seed(time.Now().Unix())
+	taskId := fmt.Sprintf("0000000000000000000000000000000000000000000000000000000000000%03d", rand.Intn(100))
+	utils.PaillerMain(pk, sk, body.DataList, taskId)
 
 	ret := new(RetEncryptCompute)
 	ret.Result = body.DataList

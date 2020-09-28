@@ -27,7 +27,7 @@ var one = new(big.Int).SetInt64(1)
 // public key, has a bit length equivalent to the value informed in the `bitlen` parameter
 func GenerateKeyPair(bitlen int) (*PublicKey, *PrivateKey, error) {
 	if bitlen < 2 {
-		return nil, nil, fmt.Errorf("The `bitlen` parameter should not be smaller then 1024")
+		return nil, nil, fmt.Errorf("the `bitlen` parameter should not be smaller then 1024")
 	}
 	p := getPrime(bitlen / 2)
 	q := getPrime(bitlen / 2)
@@ -66,15 +66,32 @@ func (pk *PrivateKey) ToDecimalString() (string, string) {
 	return pk.mu.Text(10), pk.lambda.Text(10)
 }
 
+// NewPrivateKey creates a private key with the parameters
+func NewPrivateKey(mu, lambda string, pk *PublicKey) (*PrivateKey, error) {
+	mu2, ok := new(big.Int).SetString(mu, 16)
+	if !ok {
+		return nil, fmt.Errorf("invalid value for the modulus mu")
+	}
+	lambda2, ok2 := new(big.Int).SetString(lambda, 16)
+	if !ok2 {
+		return nil, fmt.Errorf("invalid value for the modulus lambda")
+	}
+	return &PrivateKey{
+		mu:     mu2,
+		lambda: lambda2,
+		pk:     pk,
+	}, nil
+}
+
 // NewPublicKey creates a public key with the parameters
 func NewPublicKey(N, g string) (*PublicKey, error) {
 	n, ok := new(big.Int).SetString(N, 16)
 	if !ok {
-		return nil, fmt.Errorf("Invalid value for the modulus N")
+		return nil, fmt.Errorf("invalid value for the modulus N")
 	}
 	g2, ok2 := new(big.Int).SetString(g, 16)
 	if !ok2 {
-		return nil, fmt.Errorf("Invalid value for the modulus N")
+		return nil, fmt.Errorf("invalid value for the modulus N")
 	}
 	return &PublicKey{
 		N:  n,

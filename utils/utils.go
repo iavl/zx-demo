@@ -4,12 +4,36 @@ import (
 	"encoding/json"
 	"fmt"
 	"math/big"
+	"math/rand"
+	"os"
 	"os/exec"
+	"strconv"
+	"time"
 
 	types "github.com/iavl/zx-demo"
 
 	"github.com/iavl/zx-demo/paillier"
 )
+
+func RandString(len int) string {
+	r := rand.New(rand.NewSource(time.Now().Unix()))
+
+	bytes := make([]byte, len)
+	for i := 0; i < len; i++ {
+		b := r.Intn(26) + 65
+		bytes[i] = byte(b)
+	}
+	return string(bytes)
+}
+
+func ParseBigInt(s string) (*big.Int, error) {
+	num, err := strconv.Atoi(s)
+	if err != nil {
+		return big.NewInt(0), err
+	}
+	n := big.NewInt(int64(num))
+	return n, nil
+}
 
 func GetRSAKeyPair() (*paillier.PublicKey, *paillier.PrivateKey) {
 	pk, sk, _ := paillier.GenerateKeyPair(32)
@@ -25,9 +49,9 @@ func GetRSAKeyPair() (*paillier.PublicKey, *paillier.PrivateKey) {
 }
 
 func SetN2(n2 *big.Int) {
-	command := "../cli/setN2.sh"
+	dir, _ := os.Getwd()
+	command := dir + "/cli/setN2.sh"
 
-	fmt.Println(n2.String())
 	cmd := exec.Command("/bin/bash", command, "alice", types.ContractBech32Addr, n2.String())
 	fmt.Println(cmd.String())
 	output, err := cmd.Output()
@@ -48,11 +72,13 @@ func SetN2(n2 *big.Int) {
 }
 
 func ClearResult(taskId string) {
-	command := "../cli/ClearResult.sh"
+	dir, _ := os.Getwd()
+	command := dir + "/cli/clearResult.sh"
 
 	cmd := exec.Command("/bin/bash", command, "alice", types.ContractBech32Addr, taskId)
 	fmt.Println(cmd.String())
 	output, err := cmd.Output()
+
 	if err != nil {
 		fmt.Println(fmt.Sprintf("Execute Command failed: %v", err))
 		return
@@ -70,8 +96,8 @@ func ClearResult(taskId string) {
 }
 
 func PaillerAdd(taskId string, value *big.Int) {
-
-	command := "../cli/PaillerAdd.sh"
+	dir, _ := os.Getwd()
+	command := dir + "/cli/PaillerAdd.sh"
 
 	cmd := exec.Command("/bin/bash", command, "alice", types.ContractBech32Addr, taskId, value.String())
 	fmt.Println(cmd.String())
@@ -97,7 +123,8 @@ func QueyrPaillierResult(taskId string) (result *big.Int) {
 		Result []*big.Int
 	}
 
-	command := "../cli/queyrPaillierResult.sh"
+	dir, _ := os.Getwd()
+	command := dir + "/cli/queyrPaillierResult.sh"
 
 	cmd := exec.Command("/bin/bash", command, types.ContractBech32Addr, taskId)
 	fmt.Println(cmd.String())
@@ -122,14 +149,11 @@ func QueyrPaillierResult(taskId string) (result *big.Int) {
 	return result
 }
 
-func PaillerMain(pk *paillier.PublicKey, sk *paillier.PrivateKey, dataList []int64, idx int) {
-
-	fmt.Println(fmt.Sprintf("===================== 第 %d 组测试数据 =====================", idx))
-	// generate taskId
-	taskId := fmt.Sprintf("00000000000000000000000000000000000000000000000000000000000000%02d", idx)
+func PaillerMain(pk *paillier.PublicKey, sk *paillier.PrivateKey, dataList []int64, taskId string) {
 	fmt.Println(fmt.Sprintf("task id: %s", taskId))
 
 	ClearResult(taskId)
+	SetN2(pk.N2)
 
 	// 3. call contract to do paillier add
 	for i, item := range dataList {
@@ -143,7 +167,7 @@ func PaillerMain(pk *paillier.PublicKey, sk *paillier.PrivateKey, dataList []int
 
 	// 4. query result from contract
 	result := QueyrPaillierResult(taskId)
-	fmt.Println(fmt.Sprintf("===================== 第 %d 组测试结果 =====================", idx))
+	fmt.Println(fmt.Sprintf("===================== taskID: %s 测试结果 =====================", taskId))
 	fmt.Println(fmt.Sprintf("合约计算出的结果: %v", result))
 
 	// 5. decrypt result
