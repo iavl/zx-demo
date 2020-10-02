@@ -157,15 +157,15 @@ func QueyrPaillierResult(taskId string) (result *big.Int) {
 func PaillerMain(pk *paillier.PublicKey, sk *paillier.PrivateKey, dataList []int64, taskId string) {
 	fmt.Println(fmt.Sprintf("task id: %s", taskId))
 
-	fmt.Println(fmt.Sprintf("N2: %d", pk.N2.String()))
+	fmt.Println(fmt.Sprintf("N2: %x", pk.N2))
 	ClearResult(taskId)
 
 	SetN2(pk.N2)
 
 	// 3. call contract to do paillier add
 	for i, item := range dataList {
-		n, g := pk.ToDecimalString()
-		fmt.Println(fmt.Sprintf("data: %d, pub key, n: %d, g: %d", item, n, g))
+		n, g := pk.ToString()
+		fmt.Println(fmt.Sprintf("data: %d, pub key, n: %s, g: %s", item, n, g))
 		cipherText, _ := pk.Encrypt(item)
 		fmt.Println(fmt.Sprintf("机构 %d, 明文贷款额：%d --> 加密密文：%d", i, item, cipherText))
 		PaillerAdd(taskId, cipherText)

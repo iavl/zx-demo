@@ -106,11 +106,11 @@ func EncryptCompute(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	N, g := pk.ToDecimalString()
+	N, g := pk.ToString()
 	fmt.Println(fmt.Sprintf("RSA公钥：n: %s g: %s", N, g))
-	fmt.Println(fmt.Sprintf("RSA N2: %s", pk.N2.Text(10)))
+	fmt.Println(fmt.Sprintf("RSA N2: %x", pk.N2))
 
-	mu, lam := sk.ToDecimalString()
+	mu, lam := sk.ToString()
 	fmt.Println(fmt.Sprintf("RSA私钥：λ: %s μ: %s", lam, mu))
 
 	// generate taskId
