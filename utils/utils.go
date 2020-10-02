@@ -102,7 +102,7 @@ func ClearResult(taskId string) {
 
 func PaillerAdd(taskId string, value *big.Int) (txHash string) {
 	dir, _ := os.Getwd()
-	command := dir + "/cli/PaillerAdd.sh"
+	command := dir + "/cli/paillerAdd.sh"
 
 	cmd := exec.Command("/bin/bash", command, "alice", types.ContractBech32Addr, dir, taskId, value.String())
 	fmt.Println(cmd.String())
