@@ -43,11 +43,11 @@ func ParseBigInt(s string) (*big.Int, error) {
 func GetRSAKeyPair() (*paillier.PublicKey, *paillier.PrivateKey) {
 	pk, sk, _ := paillier.GenerateKeyPair(32)
 
-	N, g := pk.ToDecimalString()
+	N, g := pk.ToString()
 	fmt.Println(fmt.Sprintf("RSA公钥：n: %s g: %s", N, g))
-	fmt.Println(fmt.Sprintf("RSA N2: %s", pk.N2.Text(10)))
+	fmt.Println(fmt.Sprintf("RSA N2: %x", pk.N2))
 
-	mu, lam := sk.ToDecimalString()
+	mu, lam := sk.ToString()
 	fmt.Println(fmt.Sprintf("RSA私钥：λ: %s μ: %s", lam, mu))
 
 	return pk, sk
@@ -100,7 +100,7 @@ func ClearResult(taskId string) {
 	fmt.Println(fmt.Sprintf("ClearResult txhash: %v", res.Txhash))
 }
 
-func PaillerAdd(taskId string, value *big.Int) {
+func PaillerAdd(taskId string, value *big.Int) (txHash string) {
 	dir, _ := os.Getwd()
 	command := dir + "/cli/PaillerAdd.sh"
 
@@ -118,14 +118,16 @@ func PaillerAdd(taskId string, value *big.Int) {
 		fmt.Println(fmt.Sprintf("unmarshal result failed: %v", err))
 		return
 	}
-
 	fmt.Println(fmt.Sprintf("PaillerAdd txhash: %v", res.Txhash))
+
+	txHash = res.Txhash
+	return txHash
 }
 
-func QueyrPaillierResult(taskId string) (result *big.Int) {
+func QueyrPaillierResult(taskId string) (result int64) {
 	type QueryResult struct {
 		Gas    int64
-		Result []*big.Int
+		Result []int64
 	}
 
 	dir, _ := os.Getwd()
@@ -154,7 +156,7 @@ func QueyrPaillierResult(taskId string) (result *big.Int) {
 	return result
 }
 
-func PaillerMain(pk *paillier.PublicKey, sk *paillier.PrivateKey, dataList []int64, taskId string) {
+func PaillerMain(pk *paillier.PublicKey, sk *paillier.PrivateKey, dataList []int64, taskId string) (cipherTextList []string, txHashList []string, encryptResult, decryptResult int64, err error) {
 	fmt.Println(fmt.Sprintf("task id: %s", taskId))
 
 	fmt.Println(fmt.Sprintf("N2: %x", pk.N2))
@@ -163,30 +165,35 @@ func PaillerMain(pk *paillier.PublicKey, sk *paillier.PrivateKey, dataList []int
 	SetN2(pk.N2)
 
 	// 3. call contract to do paillier add
+	cipherTextList = make([]string, 0)
+	txHashList = make([]string, 0)
 	for i, item := range dataList {
-		n, g := pk.ToString()
-		fmt.Println(fmt.Sprintf("data: %d, pub key, n: %s, g: %s", item, n, g))
+		//n, g := pk.ToString()
+		//fmt.Println(fmt.Sprintf("data: %d, pub key, n: %s, g: %s", item, n, g))
 		cipherText, _ := pk.Encrypt(item)
 		fmt.Println(fmt.Sprintf("机构 %d, 明文贷款额：%d --> 加密密文：%d", i, item, cipherText))
-		PaillerAdd(taskId, cipherText)
+		txHash := PaillerAdd(taskId, cipherText)
 
+		cipherTextList = append(cipherTextList, cipherText.String())
+		txHashList = append(txHashList, txHash)
 		//break
 	}
 
 	// 4. query result from contract
-	result := QueyrPaillierResult(taskId)
+	encryptResult = QueyrPaillierResult(taskId)
 	fmt.Println(fmt.Sprintf("===================== taskID: %s 测试结果 =====================", taskId))
-	fmt.Println(fmt.Sprintf("合约计算出的结果: %v", result))
+	fmt.Println(fmt.Sprintf("合约计算出的结果: %v", encryptResult))
 
 	// 5. decrypt result
 	// Test the homomorphic property
-	sum, err := sk.Decrypt(result)
+
+	decryptResult, err = sk.Decrypt(big.NewInt(encryptResult))
 	if err != nil {
 		fmt.Println(fmt.Errorf("decrypt failed: %v", err.Error()))
-		return
+		return cipherTextList, txHashList, 0, 0, err
 	}
 
-	fmt.Println(fmt.Sprintf("使用RSA私钥解密后的结果: [%d]", sum))
+	fmt.Println(fmt.Sprintf("使用RSA私钥解密后的结果: [%d]", decryptResult))
 	fmt.Println(fmt.Sprintf("=========================================================="))
-
+	return cipherTextList, txHashList, encryptResult, decryptResult, nil
 }

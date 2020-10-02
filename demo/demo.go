@@ -107,26 +107,6 @@ func PaillierLocal() {
 
 func PaillierTest() {
 
-	/*
-		RSA公钥：
-		n: b70ac9f7
-		g: b70ac9f8
-		RSA N2: 82e06d3388a1cc51
-		RSA私钥：
-		λ: b70917e8
-		μ: 75c2d9ea
-		明文的贷款数额：
-		[111 222]
-		RSA加密后的贷款数额：
-		[6057285865928576296 8192053536796597062]
-		total: 1
-		total: 540fcd66f5aacd28
-		total: 2c8c00e0eb635a66
-		累加后的加密贷款总额：
-		3209941600430152294
-		RSA解密后的贷款总额:
-		333
-	*/
 	pk, err := paillier.NewPublicKey("b70ac9f7", "b70ac9f8")
 	if err != nil {
 		fmt.Println("parse pubkey error")
@@ -139,13 +119,14 @@ func PaillierTest() {
 		return
 	}
 
-	N, g := pk.ToDecimalString()
-	fmt.Println(fmt.Sprintf("RSA公钥：n: %s g: %s", N, g))
-	fmt.Println(fmt.Sprintf("RSA N2: %s", pk.N2.Text(10)))
+	/*
+		N, g := pk.ToDecimalString()
+		fmt.Println(fmt.Sprintf("RSA公钥：n: %s g: %s", N, g))
+		fmt.Println(fmt.Sprintf("RSA N2: %s", pk.N2.Text(10)))
 
-	mu, lam := sk.ToDecimalString()
-	fmt.Println(fmt.Sprintf("RSA私钥：λ: %s μ: %s", lam, mu))
-
+		mu, lam := sk.ToDecimalString()
+		fmt.Println(fmt.Sprintf("RSA私钥：λ: %s μ: %s", lam, mu))
+	*/
 	var inputs = [...]int64{111, 222}
 
 	fmt.Println(fmt.Sprintf("明文的贷款数额：\n%d", inputs))
