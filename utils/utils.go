@@ -57,7 +57,7 @@ func SetN2(n2 *big.Int) {
 	dir, _ := os.Getwd()
 	command := dir + "/cli/setN2.sh"
 
-	cmd := exec.Command("/bin/bash", command, "alice", types.ContractBech32Addr, n2.String())
+	cmd := exec.Command("/bin/bash", command, "alice", types.ContractBech32Addr, dir, n2.String())
 	fmt.Println(cmd.String())
 	output, err := cmd.Output()
 	if err != nil {
@@ -80,7 +80,7 @@ func ClearResult(taskId string) {
 	dir, _ := os.Getwd()
 	command := dir + "/cli/clearResult.sh"
 
-	cmd := exec.Command("/bin/bash", command, "alice", types.ContractBech32Addr, taskId)
+	cmd := exec.Command("/bin/bash", command, "alice", types.ContractBech32Addr, dir, taskId)
 	fmt.Println(cmd.String())
 	output, err := cmd.Output()
 
@@ -104,7 +104,7 @@ func PaillerAdd(taskId string, value *big.Int) (txHash string) {
 	dir, _ := os.Getwd()
 	command := dir + "/cli/PaillerAdd.sh"
 
-	cmd := exec.Command("/bin/bash", command, "alice", types.ContractBech32Addr, taskId, value.String())
+	cmd := exec.Command("/bin/bash", command, "alice", types.ContractBech32Addr, dir, taskId, value.String())
 	fmt.Println(cmd.String())
 	output, err := cmd.Output()
 	if err != nil {
@@ -124,16 +124,16 @@ func PaillerAdd(taskId string, value *big.Int) (txHash string) {
 	return txHash
 }
 
-func QueyrPaillierResult(taskId string) (result int64) {
+func QueryPaillierResult(taskId string) (result int64) {
 	type QueryResult struct {
 		Gas    int64
 		Result []int64
 	}
 
 	dir, _ := os.Getwd()
-	command := dir + "/cli/queyrPaillierResult.sh"
+	command := dir + "/cli/queryPaillierResult.sh"
 
-	cmd := exec.Command("/bin/bash", command, types.ContractBech32Addr, taskId)
+	cmd := exec.Command("/bin/bash", command, types.ContractBech32Addr, dir, taskId)
 	fmt.Println(cmd.String())
 	output, err := cmd.Output()
 	if err != nil {
@@ -180,7 +180,7 @@ func PaillerMain(pk *paillier.PublicKey, sk *paillier.PrivateKey, dataList []int
 	}
 
 	// 4. query result from contract
-	encryptResult = QueyrPaillierResult(taskId)
+	encryptResult = QueryPaillierResult(taskId)
 	fmt.Println(fmt.Sprintf("===================== taskID: %s 测试结果 =====================", taskId))
 	fmt.Println(fmt.Sprintf("合约计算出的结果: %v", encryptResult))
 
