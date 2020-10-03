@@ -131,7 +131,7 @@ func PaillerAdd(taskId string, value *big.Int, name string) (txHash string) {
 	command := dir + "/cli/paillerAdd.sh"
 
 	cmd := exec.Command("/bin/bash", command, name, types.ContractBech32Addr, dir, taskId, value.String())
-	fmt.Println(cmd.String())
+	//fmt.Println(cmd.String())
 	output, err := cmd.Output()
 	if err != nil {
 		fmt.Println(fmt.Sprintf("Execute Command failed: %v", err))
