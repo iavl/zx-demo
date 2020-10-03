@@ -214,6 +214,7 @@ func PaillerMain(pk *paillier.PublicKey, sk *paillier.PrivateKey, dataList []int
 	encryptResult = QueryPaillierResult(taskId)
 	fmt.Println(fmt.Sprintf("===================== taskID: %s =====================", taskId))
 	fmt.Println(fmt.Sprintf("合约计算出的结果: %v", encryptResult))
+	fmt.Println(fmt.Sprintf("=========================================================="))
 
 	// 5. decrypt result
 	// Test the homomorphic property
@@ -224,7 +225,6 @@ func PaillerMain(pk *paillier.PublicKey, sk *paillier.PrivateKey, dataList []int
 		return cipherTextList, txHashList, big.NewInt(0), 0, err
 	}
 
-	fmt.Println(fmt.Sprintf("使用RSA私钥解密后的结果: [%d]", decryptResult))
-	fmt.Println(fmt.Sprintf("=========================================================="))
+	//fmt.Println(fmt.Sprintf("使用RSA私钥解密后的结果: [%d]", decryptResult))
 	return cipherTextList, txHashList, encryptResult, decryptResult, nil
 }
