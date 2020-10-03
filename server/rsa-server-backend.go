@@ -112,6 +112,7 @@ func EncryptCompute(w http.ResponseWriter, req *http.Request) {
 	}
 
 	N, g := pk.ToDecimalString()
+	fmt.Println(fmt.Sprintf("=========================================================="))
 	fmt.Println(fmt.Sprintf("RSA公钥：n: %s g: %s", N, g))
 	fmt.Println(fmt.Sprintf("RSA N2: %d", pk.N2))
 

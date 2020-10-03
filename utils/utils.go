@@ -160,14 +160,14 @@ func QueryPaillierResult(taskId string) (result *big.Int) {
 	command := dir + "/cli/queryPaillierResult.sh"
 
 	cmd := exec.Command("/bin/bash", command, types.ContractBech32Addr, dir, taskId)
-	fmt.Println(cmd.String())
+	//fmt.Println(cmd.String())
 	output, err := cmd.Output()
 	if err != nil {
 		fmt.Println(fmt.Sprintf("Execute Command failed: %v", err))
 		return
 	}
 	// result example: {"Gas":8516,"Result":[0]}
-	fmt.Println(fmt.Sprintf("%s", string(output)))
+	fmt.Println(fmt.Sprintf("查询结果： %s", string(output)))
 
 	var res QueryResult
 	err = json.Unmarshal(output, &res)
@@ -198,7 +198,7 @@ func PaillerMain(pk *paillier.PublicKey, sk *paillier.PrivateKey, dataList []int
 		//fmt.Println(fmt.Sprintf("data: %d, pub key, n: %s, g: %s", item, n, g))
 		cipherText, _ := pk.Encrypt(item)
 		//fmt.Println(fmt.Sprintf("机构 %d, 明文贷款额：%d --> 加密密文：%d", i, item, cipherText))
-		fmt.Println(fmt.Sprintf("机构 %d, 上传的加密数据：%d", i, cipherText))
+		fmt.Println(fmt.Sprintf("机构 %d 上传的加密数据：%d", i, cipherText))
 		name := fmt.Sprintf("alice%d", i)
 		//fmt.Println(fmt.Sprintf("name: %s", name))
 		txHash := PaillerAdd(taskId, cipherText, name)
@@ -212,7 +212,7 @@ func PaillerMain(pk *paillier.PublicKey, sk *paillier.PrivateKey, dataList []int
 
 	// 4. query result from contract
 	encryptResult = QueryPaillierResult(taskId)
-	fmt.Println(fmt.Sprintf("===================== taskID: %s =====================", taskId))
+	fmt.Println(fmt.Sprintf("taskID: %s", taskId))
 	fmt.Println(fmt.Sprintf("合约计算出的结果: %v", encryptResult))
 	fmt.Println(fmt.Sprintf("=========================================================="))
 
