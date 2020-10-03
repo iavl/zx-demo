@@ -128,7 +128,7 @@ func EncryptCompute(w http.ResponseWriter, req *http.Request) {
 	cipherTextList, txHashList, encryptResult, decryptResult, err := utils.PaillerMain(pk, sk, body.DataList, taskId)
 
 	ret.TxHashList = txHashList
-	ret.EncryptResult = strconv.FormatInt(encryptResult, 10)
+	ret.EncryptResult = encryptResult.String()
 	ret.DecryptResult = strconv.FormatInt(decryptResult, 10)
 	ret.Success = "true"
 	ret.EncryptDataList = cipherTextList

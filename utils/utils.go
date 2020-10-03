@@ -150,10 +150,10 @@ func PaillerAdd(taskId string, value *big.Int, name string) (txHash string) {
 	return txHash
 }
 
-func QueryPaillierResult(taskId string) (result int64) {
+func QueryPaillierResult(taskId string) (result *big.Int) {
 	type QueryResult struct {
 		Gas    int64
-		Result []int64
+		Result []*big.Int
 	}
 
 	dir, _ := os.Getwd()
@@ -167,7 +167,7 @@ func QueryPaillierResult(taskId string) (result int64) {
 		return
 	}
 	// result example: {"Gas":8516,"Result":[0]}
-	//fmt.Println(fmt.Sprintf("%s", string(output)))
+	fmt.Println(fmt.Sprintf("%s", string(output)))
 
 	var res QueryResult
 	err = json.Unmarshal(output, &res)
@@ -182,7 +182,7 @@ func QueryPaillierResult(taskId string) (result int64) {
 	return result
 }
 
-func PaillerMain(pk *paillier.PublicKey, sk *paillier.PrivateKey, dataList []int64, taskId string) (cipherTextList []string, txHashList []string, encryptResult, decryptResult int64, err error) {
+func PaillerMain(pk *paillier.PublicKey, sk *paillier.PrivateKey, dataList []int64, taskId string) (cipherTextList []string, txHashList []string, encryptResult *big.Int, decryptResult int64, err error) {
 	fmt.Println(fmt.Sprintf("task id: %s", taskId))
 
 	fmt.Println(fmt.Sprintf("N2: %d", pk.N2))
@@ -212,16 +212,16 @@ func PaillerMain(pk *paillier.PublicKey, sk *paillier.PrivateKey, dataList []int
 
 	// 4. query result from contract
 	encryptResult = QueryPaillierResult(taskId)
-	fmt.Println(fmt.Sprintf("===================== taskID: %s 测试结果 =====================", taskId))
+	fmt.Println(fmt.Sprintf("===================== taskID: %s =====================", taskId))
 	fmt.Println(fmt.Sprintf("合约计算出的结果: %v", encryptResult))
 
 	// 5. decrypt result
 	// Test the homomorphic property
 
-	decryptResult, err = sk.Decrypt(big.NewInt(encryptResult))
+	decryptResult, err = sk.Decrypt(encryptResult)
 	if err != nil {
 		fmt.Println(fmt.Errorf("decrypt failed: %v", err.Error()))
-		return cipherTextList, txHashList, 0, 0, err
+		return cipherTextList, txHashList, big.NewInt(0), 0, err
 	}
 
 	fmt.Println(fmt.Sprintf("使用RSA私钥解密后的结果: [%d]", decryptResult))
