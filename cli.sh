@@ -6,17 +6,26 @@ nchcli vm create --code_file=./contract/paillier.bc \
 --gas=9531375 \
 -b block -y
 
-nchcli q vm call $(nchcli keys show -a alice) nch1n5u896f2lrz9wf34z3xnquzqcprcys072u0mzq \
+nchcli q vm call $(nchcli keys show -a alice) nch19h2v460km5vcnt5scvl0d3qn2mnanpjkz8m7lu \
 queryResult ./contract/paillier.abi \
 --args="0000000000000000000000000000000000000000000000000000000000000000"
 
 echo 11111111 | \
 nchcli vm call --from=$(nchcli keys show -a alice) \
---contract_addr=nch1n5u896f2lrz9wf34z3xnquzqcprcys072u0mzq \
+--contract_addr=nch19h2v460km5vcnt5scvl0d3qn2mnanpjkz8m7lu \
 --method=setN2 \
 --abi_file="./contract/paillier.abi" \
 --args="8292631376851370761" \
 --gas=98669 -b block -y
+
+echo 11111111 | \
+nchcli vm call --from=$(nchcli keys show -a alice) \
+--contract_addr=nch19h2v460km5vcnt5scvl0d3qn2mnanpjkz8m7lu \
+--method=resetN2 \
+--abi_file="./contract/paillier.abi" \
+--args="8292631376851370761" \
+--gas=98669 -b block -y
+
 
 nchcli q vm call $(nchcli keys show -a alice) nch1n5u896f2lrz9wf34z3xnquzqcprcys072u0mzq \
 N2 ./contract/paillier.abi

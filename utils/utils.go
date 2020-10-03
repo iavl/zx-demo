@@ -43,14 +43,40 @@ func ParseBigInt(s string) (*big.Int, error) {
 func GetRSAKeyPair() (*paillier.PublicKey, *paillier.PrivateKey) {
 	pk, sk, _ := paillier.GenerateKeyPair(32)
 
-	N, g := pk.ToDecimalString()
-	fmt.Println(fmt.Sprintf("RSA公钥：n: %s g: %s", N, g))
-	fmt.Println(fmt.Sprintf("RSA N2: %d", pk.N2))
+	/*
+		N, g := pk.ToDecimalString()
+		fmt.Println(fmt.Sprintf("RSA公钥：n: %s g: %s", N, g))
+		fmt.Println(fmt.Sprintf("RSA N2: %d", pk.N2))
 
-	mu, lam := sk.ToDecimalString()
-	fmt.Println(fmt.Sprintf("RSA私钥：λ: %s μ: %s", lam, mu))
+		mu, lam := sk.ToDecimalString()
+		fmt.Println(fmt.Sprintf("RSA私钥：λ: %s μ: %s", lam, mu))
 
+
+	*/
 	return pk, sk
+}
+
+func ResetN2(n2 *big.Int, taskId string) {
+	dir, _ := os.Getwd()
+	command := dir + "/cli/resetN2.sh"
+
+	cmd := exec.Command("/bin/bash", command, "alice", types.ContractBech32Addr, dir, n2.String(), taskId)
+	//fmt.Println(cmd.String())
+	output, err := cmd.Output()
+	if err != nil {
+		fmt.Println(fmt.Sprintf("Execute Command failed: %v", err))
+		return
+	}
+	// result example: {"Gas":8516,"Result":[0]}
+	//fmt.Println(fmt.Sprintf("setN2 response: %s", string(output)))
+	var res types.CallResult
+	err = json.Unmarshal(output, &res)
+	if err != nil {
+		fmt.Println(fmt.Sprintf("unmarshal result failed: %v", err))
+		return
+	}
+
+	fmt.Println(fmt.Sprintf("resetN2 txhash: %v", res.Txhash))
 }
 
 func SetN2(n2 *big.Int) {
@@ -58,7 +84,7 @@ func SetN2(n2 *big.Int) {
 	command := dir + "/cli/setN2.sh"
 
 	cmd := exec.Command("/bin/bash", command, "alice", types.ContractBech32Addr, dir, n2.String())
-	fmt.Println(cmd.String())
+	//fmt.Println(cmd.String())
 	output, err := cmd.Output()
 	if err != nil {
 		fmt.Println(fmt.Sprintf("Execute Command failed: %v", err))
@@ -81,7 +107,7 @@ func ClearResult(taskId string) {
 	command := dir + "/cli/clearResult.sh"
 
 	cmd := exec.Command("/bin/bash", command, "alice", types.ContractBech32Addr, dir, taskId)
-	fmt.Println(cmd.String())
+	//fmt.Println(cmd.String())
 	output, err := cmd.Output()
 
 	if err != nil {
@@ -105,7 +131,7 @@ func PaillerAdd(taskId string, value *big.Int, name string) (txHash string) {
 	command := dir + "/cli/paillerAdd.sh"
 
 	cmd := exec.Command("/bin/bash", command, name, types.ContractBech32Addr, dir, taskId, value.String())
-	fmt.Println(cmd.String())
+	//fmt.Println(cmd.String())
 	output, err := cmd.Output()
 	if err != nil {
 		fmt.Println(fmt.Sprintf("Execute Command failed: %v", err))
@@ -118,7 +144,7 @@ func PaillerAdd(taskId string, value *big.Int, name string) (txHash string) {
 		fmt.Println(fmt.Sprintf("unmarshal result failed: %v", err))
 		return
 	}
-	fmt.Println(fmt.Sprintf("PaillerAdd txhash: %v", res.Txhash))
+	fmt.Println(fmt.Sprintf("上链交易Hash记录: https://explorer.netcloth.org/transactions/%v", res.Txhash))
 
 	txHash = res.Txhash
 	return txHash
@@ -159,10 +185,10 @@ func QueryPaillierResult(taskId string) (result int64) {
 func PaillerMain(pk *paillier.PublicKey, sk *paillier.PrivateKey, dataList []int64, taskId string) (cipherTextList []string, txHashList []string, encryptResult, decryptResult int64, err error) {
 	fmt.Println(fmt.Sprintf("task id: %s", taskId))
 
-	fmt.Println(fmt.Sprintf("N2: %x", pk.N2))
-	ClearResult(taskId)
-
-	SetN2(pk.N2)
+	fmt.Println(fmt.Sprintf("N2: %d", pk.N2))
+	ResetN2(pk.N2, taskId)
+	//SetN2(pk.N2)
+	//ClearResult(taskId)
 
 	// 3. call contract to do paillier add
 	cipherTextList = make([]string, 0)
@@ -171,15 +197,18 @@ func PaillerMain(pk *paillier.PublicKey, sk *paillier.PrivateKey, dataList []int
 		//n, g := pk.ToString()
 		//fmt.Println(fmt.Sprintf("data: %d, pub key, n: %s, g: %s", item, n, g))
 		cipherText, _ := pk.Encrypt(item)
-		fmt.Println(fmt.Sprintf("机构 %d, 明文贷款额：%d --> 加密密文：%d", i, item, cipherText))
+		//fmt.Println(fmt.Sprintf("机构 %d, 明文贷款额：%d --> 加密密文：%d", i, item, cipherText))
+		fmt.Println(fmt.Sprintf("机构 %d, 上传的加密数据：%d", i, cipherText))
 		name := fmt.Sprintf("alice%d", i)
-		fmt.Println(fmt.Sprintf("name: %s", name))
+		//fmt.Println(fmt.Sprintf("name: %s", name))
 		txHash := PaillerAdd(taskId, cipherText, name)
 
 		cipherTextList = append(cipherTextList, cipherText.String())
 		txHashList = append(txHashList, txHash)
 		//break
 	}
+
+	time.Sleep(time.Second * 6)
 
 	// 4. query result from contract
 	encryptResult = QueryPaillierResult(taskId)

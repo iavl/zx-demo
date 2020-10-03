@@ -53,8 +53,8 @@ type ReqBody struct {
 func GetRSAKeyPair(w http.ResponseWriter, req *http.Request) {
 	// 1. generate pk and sk
 	pk, sk := utils.GetRSAKeyPair()
-	N, g := pk.ToString()
-	mu, lam := sk.ToString()
+	N, g := pk.ToDecimalString()
+	mu, lam := sk.ToDecimalString()
 	//N2 := pk.N2.Text(10)
 
 	pri := PrivKey{lam, mu}
@@ -95,9 +95,9 @@ func EncryptCompute(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	fmt.Println(fmt.Sprintf("data list: %v", body.DataList))
-	fmt.Println(fmt.Sprintf("pri key: %v", body.PrivK))
-	fmt.Println(fmt.Sprintf("pub key: %v", body.PubK))
+	//fmt.Println(fmt.Sprintf("data list: %v", body.DataList))
+	//fmt.Println(fmt.Sprintf("pri key: %v", body.PrivK))
+	//fmt.Println(fmt.Sprintf("pub key: %v", body.PubK))
 
 	pk, err := paillier.NewPublicKey(body.PubK.N, body.PubK.G)
 	if err != nil {
@@ -115,8 +115,8 @@ func EncryptCompute(w http.ResponseWriter, req *http.Request) {
 	fmt.Println(fmt.Sprintf("RSA公钥：n: %s g: %s", N, g))
 	fmt.Println(fmt.Sprintf("RSA N2: %d", pk.N2))
 
-	mu, lam := sk.ToDecimalString()
-	fmt.Println(fmt.Sprintf("RSA私钥：λ: %s μ: %s", lam, mu))
+	//mu, lam := sk.ToDecimalString()
+	//fmt.Println(fmt.Sprintf("RSA私钥：λ: %s μ: %s", lam, mu))
 
 	ret := new(RetEncryptCompute)
 

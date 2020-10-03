@@ -8,6 +8,7 @@ import (
 	"os"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/iavl/zx-demo/paillier"
 
@@ -151,9 +152,14 @@ func PaillierTest() {
 }
 
 func main() {
-	PaillierDemo()
+	startTime := time.Now().UnixNano()
+
+	//PaillierDemo()
 
 	//PaillierLocal()
 
-	//PaillierTest()
+	PaillierTest()
+	endTime := time.Now().UnixNano()
+	seconds := int64((endTime - startTime) / 1e9)
+	fmt.Println(fmt.Sprintf("time: %d", seconds))
 }

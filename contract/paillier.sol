@@ -59,6 +59,12 @@ contract Paillier {
         N2 = _n2;
     }
 
+    // reset N2 with taskId
+    function resetN2(uint256 _n2, bytes32 taskId) public {
+        N2 = _n2;
+        results[taskId] = 1;
+    }
+
     /**
      * @dev set owner, owner can update N2 params
      */
