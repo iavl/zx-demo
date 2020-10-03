@@ -43,11 +43,11 @@ func ParseBigInt(s string) (*big.Int, error) {
 func GetRSAKeyPair() (*paillier.PublicKey, *paillier.PrivateKey) {
 	pk, sk, _ := paillier.GenerateKeyPair(32)
 
-	N, g := pk.ToString()
+	N, g := pk.ToDecimalString()
 	fmt.Println(fmt.Sprintf("RSA公钥：n: %s g: %s", N, g))
-	fmt.Println(fmt.Sprintf("RSA N2: %x", pk.N2))
+	fmt.Println(fmt.Sprintf("RSA N2: %d", pk.N2))
 
-	mu, lam := sk.ToString()
+	mu, lam := sk.ToDecimalString()
 	fmt.Println(fmt.Sprintf("RSA私钥：λ: %s μ: %s", lam, mu))
 
 	return pk, sk
@@ -100,11 +100,11 @@ func ClearResult(taskId string) {
 	fmt.Println(fmt.Sprintf("ClearResult txhash: %v", res.Txhash))
 }
 
-func PaillerAdd(taskId string, value *big.Int) (txHash string) {
+func PaillerAdd(taskId string, value *big.Int, name string) (txHash string) {
 	dir, _ := os.Getwd()
 	command := dir + "/cli/paillerAdd.sh"
 
-	cmd := exec.Command("/bin/bash", command, "alice", types.ContractBech32Addr, dir, taskId, value.String())
+	cmd := exec.Command("/bin/bash", command, name, types.ContractBech32Addr, dir, taskId, value.String())
 	fmt.Println(cmd.String())
 	output, err := cmd.Output()
 	if err != nil {
@@ -172,7 +172,9 @@ func PaillerMain(pk *paillier.PublicKey, sk *paillier.PrivateKey, dataList []int
 		//fmt.Println(fmt.Sprintf("data: %d, pub key, n: %s, g: %s", item, n, g))
 		cipherText, _ := pk.Encrypt(item)
 		fmt.Println(fmt.Sprintf("机构 %d, 明文贷款额：%d --> 加密密文：%d", i, item, cipherText))
-		txHash := PaillerAdd(taskId, cipherText)
+		name := fmt.Sprintf("alice%d", i)
+		fmt.Println(fmt.Sprintf("name: %s", name))
+		txHash := PaillerAdd(taskId, cipherText, name)
 
 		cipherTextList = append(cipherTextList, cipherText.String())
 		txHashList = append(txHashList, txHash)

@@ -8,4 +8,6 @@ nchcli vm call --from=$(nchcli keys show -a "$1") \
 --method=paillierAdd \
 --abi_file="$3/contract/paillier.abi" \
 --args="$4 $5" \
---gas=37207089  -b block -y
+--gas=37207089 \
+--home="$3/nchcli" \
+-b block -y

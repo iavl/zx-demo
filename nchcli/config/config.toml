@@ -1,0 +1,5 @@
+chain-id = "nch-testnet"
+indent = true
+output = "json"
+trust-node = true
+node="tcp://111.229.26.17:2317"
