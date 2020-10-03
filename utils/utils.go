@@ -212,8 +212,7 @@ func PaillerMain(pk *paillier.PublicKey, sk *paillier.PrivateKey, dataList []int
 
 	// 4. query result from contract
 	encryptResult = QueryPaillierResult(taskId)
-	fmt.Println(fmt.Sprintf("taskID: %s", taskId))
-	fmt.Println(fmt.Sprintf("合约计算出的结果: %v", encryptResult))
+	fmt.Println(fmt.Sprintf("智能合约计算出的结果: %v", encryptResult))
 	fmt.Println(fmt.Sprintf("=========================================================="))
 
 	// 5. decrypt result
