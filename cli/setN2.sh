@@ -3,7 +3,7 @@
 set -x
 
 echo 11111111 | \
-nchcli vm call --from=$(nchcli keys show -a "$1") \
+nchcli vm call --from=$(nchcli keys show -a "$1" --home="$3/nchcli") \
 --contract_addr="$2" \
 --method=setN2 \
 --abi_file="$3/contract/paillier.abi" \
