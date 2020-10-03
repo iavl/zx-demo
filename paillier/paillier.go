@@ -58,7 +58,7 @@ func GenerateKeyPair(bitlen int) (*PublicKey, *PrivateKey, error) {
 
 // ToString exports the private key values to hexadecimal strings
 func (pk *PrivateKey) ToString() (string, string) {
-	return pk.mu.Text(16), pk.lambda.Text(16)
+	return pk.mu.Text(10), pk.lambda.Text(10)
 }
 
 // ToDecimalString exports the private key values to decimal strings
@@ -68,11 +68,11 @@ func (pk *PrivateKey) ToDecimalString() (string, string) {
 
 // NewPrivateKey creates a private key with the parameters
 func NewPrivateKey(mu, lambda string, pk *PublicKey) (*PrivateKey, error) {
-	mu2, ok := new(big.Int).SetString(mu, 16)
+	mu2, ok := new(big.Int).SetString(mu, 10)
 	if !ok {
 		return nil, fmt.Errorf("invalid value for the modulus mu")
 	}
-	lambda2, ok2 := new(big.Int).SetString(lambda, 16)
+	lambda2, ok2 := new(big.Int).SetString(lambda, 10)
 	if !ok2 {
 		return nil, fmt.Errorf("invalid value for the modulus lambda")
 	}
@@ -85,11 +85,11 @@ func NewPrivateKey(mu, lambda string, pk *PublicKey) (*PrivateKey, error) {
 
 // NewPublicKey creates a public key with the parameters
 func NewPublicKey(N, g string) (*PublicKey, error) {
-	n, ok := new(big.Int).SetString(N, 16)
+	n, ok := new(big.Int).SetString(N, 10)
 	if !ok {
 		return nil, fmt.Errorf("invalid value for the modulus N")
 	}
-	g2, ok2 := new(big.Int).SetString(g, 16)
+	g2, ok2 := new(big.Int).SetString(g, 10)
 	if !ok2 {
 		return nil, fmt.Errorf("invalid value for the modulus N")
 	}

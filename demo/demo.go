@@ -73,11 +73,11 @@ func readDataFromFile(filePath string) (results [][]int64) {
 func PaillierLocal() {
 	pk, sk, _ := paillier.GenerateKeyPair(32)
 
-	N, g := pk.ToString()
+	N, g := pk.ToDecimalString()
 	fmt.Println(fmt.Sprintf("RSA公钥：\nn: %s\ng: %s", N, g))
-	fmt.Println(fmt.Sprintf("RSA N2: %x", pk.N2))
+	fmt.Println(fmt.Sprintf("RSA N2: %d", pk.N2))
 
-	mu, lam := sk.ToString()
+	mu, lam := sk.ToDecimalString()
 	fmt.Println(fmt.Sprintf("RSA私钥：\nλ: %s\nμ: %s", lam, mu))
 
 	//var inputs = [...]int64{6311, 6890, 663, 4242, 8376, 7961, 6634, 4969, 7808, 5866, 9558, 3578, 8268, 2281, 4617, 2289, 1553, 4104, 8725, 9861, 2407, 5081, 1618, 1208, 5409, 7735, 9171, 1649, 5796, 7113}
@@ -107,26 +107,25 @@ func PaillierLocal() {
 
 func PaillierTest() {
 
-	pk, err := paillier.NewPublicKey("b70ac9f7", "b70ac9f8")
+	pk, err := paillier.NewPublicKey("3919212617", "3919212618")
 	if err != nil {
 		fmt.Println("parse pubkey error")
 		return
 	}
 
-	sk, err := paillier.NewPrivateKey("75c2d9ea", "b70917e8", pk)
+	sk, err := paillier.NewPrivateKey("3090819433", "3919087380", pk)
 	if err != nil {
 		fmt.Println("parse priv key error")
 		return
 	}
 
-	/*
-		N, g := pk.ToDecimalString()
-		fmt.Println(fmt.Sprintf("RSA公钥：n: %s g: %s", N, g))
-		fmt.Println(fmt.Sprintf("RSA N2: %s", pk.N2.Text(10)))
+	N, g := pk.ToDecimalString()
+	fmt.Println(fmt.Sprintf("RSA公钥：n: %s g: %s", N, g))
+	fmt.Println(fmt.Sprintf("RSA N2: %s", pk.N2.Text(10)))
 
-		mu, lam := sk.ToDecimalString()
-		fmt.Println(fmt.Sprintf("RSA私钥：λ: %s μ: %s", lam, mu))
-	*/
+	mu, lam := sk.ToDecimalString()
+	fmt.Println(fmt.Sprintf("RSA私钥：λ: %s μ: %s", lam, mu))
+
 	var inputs = [...]int64{111, 222}
 
 	fmt.Println(fmt.Sprintf("明文的贷款数额：\n%d", inputs))
@@ -152,9 +151,9 @@ func PaillierTest() {
 }
 
 func main() {
-	//PaillierDemo()
+	PaillierDemo()
 
 	//PaillierLocal()
 
-	PaillierTest()
+	//PaillierTest()
 }

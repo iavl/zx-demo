@@ -95,9 +95,9 @@ func EncryptCompute(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	//fmt.Println(fmt.Sprintf("data list: %v", body.DataList))
-	//fmt.Println(fmt.Sprintf("pri key: %v", body.PrivK))
-	//fmt.Println(fmt.Sprintf("pub key: %v", body.PubK))
+	fmt.Println(fmt.Sprintf("data list: %v", body.DataList))
+	fmt.Println(fmt.Sprintf("pri key: %v", body.PrivK))
+	fmt.Println(fmt.Sprintf("pub key: %v", body.PubK))
 
 	pk, err := paillier.NewPublicKey(body.PubK.N, body.PubK.G)
 	if err != nil {
@@ -111,11 +111,11 @@ func EncryptCompute(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	N, g := pk.ToString()
+	N, g := pk.ToDecimalString()
 	fmt.Println(fmt.Sprintf("RSA公钥：n: %s g: %s", N, g))
-	fmt.Println(fmt.Sprintf("RSA N2: %x", pk.N2))
+	fmt.Println(fmt.Sprintf("RSA N2: %d", pk.N2))
 
-	mu, lam := sk.ToString()
+	mu, lam := sk.ToDecimalString()
 	fmt.Println(fmt.Sprintf("RSA私钥：λ: %s μ: %s", lam, mu))
 
 	ret := new(RetEncryptCompute)

@@ -43,11 +43,11 @@ func (pk *PublicKey) AddPlaintext(ct *big.Int, msg int64) (*big.Int, error) {
 func (pk *PublicKey) BatchAdd(cts ...*big.Int) *big.Int {
 	total := new(big.Int).SetInt64(1)
 	for _, ct := range cts {
-		fmt.Println(fmt.Sprintf("total: %x", total))
+		//fmt.Println(fmt.Sprintf("total: %d", total))
 		total.Mul(total, ct)
 		total.Mod(total, pk.N2)
 	}
-	fmt.Println(fmt.Sprintf("total: %x", total))
+	fmt.Println(fmt.Sprintf("total: %d", total))
 	return total.Mod(total, pk.N2)
 }
 
