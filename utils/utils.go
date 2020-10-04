@@ -199,7 +199,7 @@ func PaillerMain(pk *paillier.PublicKey, sk *paillier.PrivateKey, dataList []int
 		//fmt.Println(fmt.Sprintf("data: %d, pub key, n: %s, g: %s", item, n, g))
 		cipherText, _ := pk.Encrypt(item)
 		//fmt.Println(fmt.Sprintf("机构 %d, 明文贷款额：%d --> 加密密文：%d", i, item, cipherText))
-		fmt.Println(fmt.Sprintf("机构 %d 上传的加密数据：%d", i, cipherText))
+		fmt.Println(fmt.Sprintf("\n机构 %d 上传的加密数据：%d", i, cipherText))
 		name := fmt.Sprintf("alice%d", i)
 		//fmt.Println(fmt.Sprintf("name: %s", name))
 		txHash := PaillerAdd(taskId, cipherText, name)
