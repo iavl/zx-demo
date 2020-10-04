@@ -76,7 +76,7 @@ func ResetN2(n2 *big.Int, taskId string) {
 		return
 	}
 
-	fmt.Println(fmt.Sprintf("resetN2 txhash: %v", res.Txhash))
+	//fmt.Println(fmt.Sprintf("resetN2 txhash: %v", res.Txhash))
 }
 
 func SetN2(n2 *big.Int) {
@@ -183,9 +183,10 @@ func QueryPaillierResult(taskId string) (result *big.Int) {
 }
 
 func PaillerMain(pk *paillier.PublicKey, sk *paillier.PrivateKey, dataList []int64, taskId string) (cipherTextList []string, txHashList []string, encryptResult *big.Int, decryptResult int64, err error) {
+	fmt.Println(fmt.Sprintf("\n\n=========================================================="))
 	fmt.Println(fmt.Sprintf("task id: %s", taskId))
 
-	fmt.Println(fmt.Sprintf("N2: %d", pk.N2))
+	//fmt.Println(fmt.Sprintf("N2: %d", pk.N2))
 	ResetN2(pk.N2, taskId)
 	//SetN2(pk.N2)
 	//ClearResult(taskId)
@@ -208,12 +209,12 @@ func PaillerMain(pk *paillier.PublicKey, sk *paillier.PrivateKey, dataList []int
 		//break
 	}
 
-	time.Sleep(time.Second * 6)
+	time.Sleep(time.Second * 5)
 
 	// 4. query result from contract
 	encryptResult = QueryPaillierResult(taskId)
 	fmt.Println(fmt.Sprintf("智能合约计算出的结果: %v", encryptResult))
-	fmt.Println(fmt.Sprintf("=========================================================="))
+	fmt.Println(fmt.Sprintf("==========================================================\n\n"))
 
 	// 5. decrypt result
 	// Test the homomorphic property

@@ -111,10 +111,10 @@ func EncryptCompute(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	N, g := pk.ToDecimalString()
-	fmt.Println(fmt.Sprintf("=========================================================="))
-	fmt.Println(fmt.Sprintf("RSA公钥：n: %s g: %s", N, g))
-	fmt.Println(fmt.Sprintf("RSA N2: %d", pk.N2))
+	//N, g := pk.ToDecimalString()
+	//fmt.Println(fmt.Sprintf("=========================================================="))
+	//fmt.Println(fmt.Sprintf("RSA公钥：n: %s g: %s", N, g))
+	//fmt.Println(fmt.Sprintf("RSA N2: %d", pk.N2))
 
 	//mu, lam := sk.ToDecimalString()
 	//fmt.Println(fmt.Sprintf("RSA私钥：λ: %s μ: %s", lam, mu))
