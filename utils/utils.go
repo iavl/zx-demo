@@ -215,7 +215,7 @@ func PaillerMain(pk *paillier.PublicKey, sk *paillier.PrivateKey, dataList []int
 	// 4. query result from contract
 	encryptResult = QueryPaillierResult(taskId)
 	fmt.Println(fmt.Sprintf("智能合约计算出的结果: %v", encryptResult))
-	fmt.Println(fmt.Sprintf("=======================================================================================\n\n s"))
+	fmt.Println(fmt.Sprintf("=======================================================================================\n\n"))
 
 	// 5. decrypt result
 	// Test the homomorphic property
