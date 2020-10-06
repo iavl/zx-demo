@@ -184,7 +184,7 @@ func QueryPaillierResult(taskId string) (result *big.Int) {
 
 func PaillerMain(pk *paillier.PublicKey, sk *paillier.PrivateKey, dataList []int64, taskId string) (cipherTextList []string, txHashList []string, encryptResult *big.Int, decryptResult int64, err error) {
 	fmt.Println(fmt.Sprintf("\n\n======================================================================================="))
-	fmt.Println("================================= 开始一次新的计算任务 ================================ ")
+	fmt.Println("================================== 开始一次新的计算任务 ================================== ")
 	fmt.Println(fmt.Sprintf("====== task id: %s ======", taskId))
 
 	//fmt.Println(fmt.Sprintf("N2: %d", pk.N2))
