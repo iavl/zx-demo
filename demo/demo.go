@@ -154,11 +154,11 @@ func PaillierTest() {
 func main() {
 	startTime := time.Now().UnixNano()
 
-	//PaillierDemo()
+	PaillierDemo()
 
 	//PaillierLocal()
 
-	PaillierTest()
+	//PaillierTest()
 	endTime := time.Now().UnixNano()
 	seconds := int64((endTime - startTime) / 1e9)
 	fmt.Println(fmt.Sprintf("time: %d", seconds))
