@@ -167,7 +167,7 @@ func QueryPaillierResult(taskId string) (result *big.Int) {
 		return
 	}
 	// result example: {"Gas":8516,"Result":[0]}
-	fmt.Println(fmt.Sprintf("查询结果： %s", string(output)))
+	//fmt.Println(fmt.Sprintf("查询结果： %s", string(output)))
 
 	var res QueryResult
 	err = json.Unmarshal(output, &res)
@@ -209,12 +209,14 @@ func PaillerMain(pk *paillier.PublicKey, sk *paillier.PrivateKey, dataList []int
 		txHashList = append(txHashList, txHash)
 		//break
 	}
+	fmt.Println("等待区块最终确认....")
 
 	time.Sleep(time.Second * 5)
 
 	// 4. query result from contract
+	fmt.Println("查询最终智能合约计算的结果....")
 	encryptResult = QueryPaillierResult(taskId)
-	fmt.Println(fmt.Sprintf("智能合约计算出的结果: %v", encryptResult))
+	fmt.Println(fmt.Sprintf("智能合约计算的结果为: %v", encryptResult))
 	fmt.Println(fmt.Sprintf("=======================================================================================\n\n"))
 
 	// 5. decrypt result
